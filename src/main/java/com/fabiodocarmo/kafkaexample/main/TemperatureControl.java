@@ -15,7 +15,7 @@ public class TemperatureControl {
 		
 		var consumer = new KafkaConsumer<String, String>(properties());
 		
-		consumer.subscribe(Collections.singletonList("EXEMPLO_TOPICO"));
+		consumer.subscribe(Collections.singletonList("teste"));
 
 		while (true) {
 			
