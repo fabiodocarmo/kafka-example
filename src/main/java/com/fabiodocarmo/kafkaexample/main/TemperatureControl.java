@@ -4,12 +4,16 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
 
 public class TemperatureControl {
+	
+	static Logger logger = LoggerFactory.getLogger(TemperatureControl.class);
 
 	public static void main(String[] args) {
 		
@@ -22,26 +26,27 @@ public class TemperatureControl {
 			var records = consumer.poll(Duration.ofMillis(100));
 			
 			for (ConsumerRecord<String, String> registro : records) {
-			
-				System.out.println("------------------------------------------");
-				System.out.println("Recebendo nova temperatura");
-				System.out.println(registro.key());
-				System.out.println(registro.value());
+				
+				String msg = "Recebendo nova temperatura -----------> "
+			    			+ " | key: " + registro.key() 
+			    			+ " | value: " + registro.value();
+				
+				logger.info(msg);
 
 				final String valor = registro.value().replaceAll("º", "");
 				final Integer temperatura = Integer.valueOf(valor);
 				
 				if (temperatura > 30) {
 					
-					System.out.println("Quente");
+					logger.info("Quente");
 					
 				} else if (temperatura < 20) {
 					
-					System.out.println("Frio");
+					logger.info("Frio");
 					
 				}
 
-				System.out.println("Temperatura processada.");
+				logger.info("Temperatura processada.");
 			}
 		}
 	}

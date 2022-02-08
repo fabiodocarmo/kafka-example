@@ -6,6 +6,8 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
@@ -13,11 +15,13 @@ import java.util.concurrent.ExecutionException;
 public class SensorMain {
 	
     public static void main(String[] args) throws ExecutionException, InterruptedException {
+    	
+    	Logger logger = LoggerFactory.getLogger(SensorMain.class);
 
         var producer = new KafkaProducer<String, String>(properties());
         var key = "TEMPERATURA";
         var value = "34º";
-        var record = new ProducerRecord<String, String>("teste", key, value);
+        var prducerRecord = new ProducerRecord<String, String>("teste", key, value);
 
         Callback callback = (data, ex) -> {
             if (ex != null) {
@@ -25,13 +29,15 @@ public class SensorMain {
                 return;
             }
             
-            System.out.println("Mensagem enviada com sucesso para: " + data.topic() 
-            				 + " | partition " + data.partition() 
-            				 + " | offset " + data.offset() 
-            				 + " | tempo " + data.timestamp());
+            String msg = "Mensagem enviada com sucesso para: " + data.topic() 
+            			+ " | partition " + data.partition() 
+            			+ " | offset " + data.offset() 
+            			+ " | tempo " + data.timestamp();
+            
+			logger.info(msg);
         };
         
-        producer.send(record, callback).get();
+        producer.send(prducerRecord, callback).get();
     }
 
     private static Properties properties() {
